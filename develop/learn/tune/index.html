@@ -6,32 +6,34 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Get started with Roboflow Trackers — install SORT, ByteTrack, OC-SORT, and BoT-SORT, run your first tracking pipeline, and evaluate results with HOTA, IDF1, and MOTA metrics.">
+        <meta name="description" content="Optimize tracker hyperparameters with the Trackers Tuner class and CLI using Optuna, MOT-format detections, and evaluation metrics like HOTA, MOTA, and IDF1.">
       
       
         <meta name="author" content="Roboflow">
       
       
-        <link rel="canonical" href="https://trackers.roboflow.com/latest/develop/">
+        <link rel="canonical" href="https://trackers.roboflow.com/latest/develop/learn/tune/">
       
       
+        <link rel="prev" href="../evaluate/">
       
-        <link rel="next" href="learn/install/">
+      
+        <link rel="next" href="../detection-quality/">
       
       
         
       
       
-      <link rel="icon" href="assets/logo-trackers-black.svg">
+      <link rel="icon" href="../../assets/logo-trackers-black.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Quickstart — Multi-Object Tracking in Python | Trackers - Trackers</title>
+        <title>Tune Tracker Hyperparameters — Optuna Guide | Trackers - Trackers</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -50,15 +52,15 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="stylesheets/style.css">
+      <link rel="stylesheet" href="../../stylesheets/style.css">
     
-      <link rel="stylesheet" href="stylesheets/rf.css">
+      <link rel="stylesheet" href="../../stylesheets/rf.css">
     
-      <link rel="stylesheet" href="stylesheets/command_builder.css">
+      <link rel="stylesheet" href="../../stylesheets/command_builder.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -81,7 +83,7 @@
       "url": "https://roboflow.com",
       "description": "Roboflow builds computer vision infrastructure and tools for training and deploying vision AI models.",
       "foundingDate": "2019",
-      "logo": "assets/logo-trackers-violet.svg",
+      "logo": "../../assets/logo-trackers-violet.svg",
       "sameAs": [
         "https://github.com/roboflow",
         "https://twitter.com/roboflow",
@@ -123,38 +125,16 @@
 
 
 
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Roboflow Trackers",
-  "url": "https://trackers.roboflow.com/latest/develop/",
-  "description": "Documentation for Roboflow Trackers — multi-object tracking library with SORT, ByteTrack, OC-SORT, and BoT-SORT implementations.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "https://trackers.roboflow.com/latest/develop/?q={search_term_string}"
-    },
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-
-
-
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Quickstart",
-  "description": "Get started with Roboflow Trackers — install SORT, ByteTrack, OC-SORT, and BoT-SORT, run your first tracking pipeline, and evaluate results with HOTA, IDF1, and MOTA metrics.",
-  "url": "https://trackers.roboflow.com/latest/develop/",
+  "headline": "Tune Trackers",
+  "description": "Optimize tracker hyperparameters with the Trackers Tuner class and CLI using Optuna, MOT-format detections, and evaluation metrics like HOTA, MOTA, and IDF1.",
+  "url": "https://trackers.roboflow.com/latest/develop/learn/tune/",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://trackers.roboflow.com/latest/develop/"
+    "@id": "https://trackers.roboflow.com/latest/develop/learn/tune/"
   },
   "image": {
     "@type": "ImageObject",
@@ -181,60 +161,8 @@
       ".md-content p:first-of-type"
     ]
   },
-  "dateModified": "2026-05-17",
-  "datePublished": "2025-04-14"
-}
-</script>
-
-
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Which tracker should I use?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Start with ByteTrack — it performs best across two out of four benchmarks and handles variable-confidence detectors well. Use SORT if speed or device constraints require the lightest possible tracker. Use OC-SORT when camera motion is significant or objects follow non-linear paths."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is multi-object tracking?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Multi-object tracking assigns a persistent ID to each detected object across video frames, maintaining continuity through occlusions, re-entries, and camera motion. Trackers use a detect-then-track approach: a detector runs on each frame, and the tracker links detections across time using motion models and spatial matching."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Do I need a specific detector?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Roboflow Trackers works with any detector that outputs supervision.Detections objects. The library ships example pipelines using RF-DETR but is compatible with YOLO, Detectron2, and any custom model."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I evaluate my tracker?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Run trackers eval against a directory of ground-truth MOT-format text files. The evaluation pipeline computes HOTA, IDF1, and MOTA and prints a per-sequence and combined score table."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What MOT datasets does the library support?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "MOT17 and SportsMOT are supported for download and evaluation. Use trackers download <dataset> to pull frames, annotations, and pre-computed detections. DanceTrack and SoccerNet-tracking support is coming soon."
-      }
-    }
-  ]
+  "dateModified": "2026-05-07",
+  "datePublished": "2026-05-07"
 }
 </script>
 
@@ -246,11 +174,14 @@
 
 
 
-<meta property="og:type" content="website" />
+
+
+
+<meta property="og:type" content="article" />
 <meta property="og:site_name" content="Roboflow Trackers" />
-<meta property="og:url" content="https://trackers.roboflow.com/latest/develop/" />
-<meta property="og:title" content="Quickstart — Multi-Object Tracking in Python | Trackers" />
-<meta property="og:description" content="Get started with Roboflow Trackers — install SORT, ByteTrack, OC-SORT, and BoT-SORT, run your first tracking pipeline, and evaluate results with HOTA, IDF1, and MOTA metrics." />
+<meta property="og:url" content="https://trackers.roboflow.com/latest/develop/learn/tune/" />
+<meta property="og:title" content="Tune Tracker Hyperparameters — Optuna Guide | Trackers" />
+<meta property="og:description" content="Optimize tracker hyperparameters with the Trackers Tuner class and CLI using Optuna, MOT-format detections, and evaluation metrics like HOTA, MOTA, and IDF1." />
 <meta property="og:image" content="https://trackers.roboflow.com/assets/logo-trackers-violet.svg" />
 <meta property="og:image:alt" content="Roboflow Trackers logo" />
 
@@ -261,8 +192,8 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@roboflow" />
-<meta name="twitter:title" content="Quickstart — Multi-Object Tracking in Python | Trackers" />
-<meta name="twitter:description" content="Get started with Roboflow Trackers — install SORT, ByteTrack, OC-SORT, and BoT-SORT, run your first tracking pipeline, and evaluate results with HOTA, IDF1, and MOTA metrics." />
+<meta name="twitter:title" content="Tune Tracker Hyperparameters — Optuna Guide | Trackers" />
+<meta name="twitter:description" content="Optimize tracker hyperparameters with the Trackers Tuner class and CLI using Optuna, MOT-format detections, and evaluation metrics like HOTA, MOTA, and IDF1." />
 <meta name="twitter:image" content="https://trackers.roboflow.com/assets/logo-trackers-violet.svg" />
 
 
@@ -279,7 +210,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#install" class="md-skip">
+        <a href="#tune-trackers" class="md-skip">
           Skip to content
         </a>
       
@@ -305,14 +236,14 @@
 
     <!-- Link to home -->
     <a
-      href="."
+      href="../.."
       title="Trackers"
       class="md-header__button md-logo"
       aria-label="Trackers"
       data-md-component="logo"
     >
       
-  <img src="assets/logo-trackers-violet.svg" alt="logo">
+  <img src="../../assets/logo-trackers-violet.svg" alt="logo">
 
     </a>
 
@@ -333,7 +264,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis" style="display: flex; align-items: center; gap: 0.5rem;">
             <a
-            href="."
+            href="../.."
             title="Trackers"
             class="md-header__button md-logo"
             aria-label="Trackers"
@@ -341,11 +272,11 @@
             id="item-logo"
             >
             
-  <img src="assets/logo-trackers-violet.svg" alt="logo">
+  <img src="../../assets/logo-trackers-violet.svg" alt="logo">
 
             </a>
             
-              Quickstart — Multi-Object Tracking in Python | Trackers
+              Tune Tracker Hyperparameters — Optuna Guide | Trackers
             
           </span>
         </div>
@@ -514,13 +445,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="." class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
           
   
   
@@ -536,11 +465,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="learn/install/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../install/" class="md-tabs__link">
           
   
   
@@ -560,7 +491,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="trackers/comparison/" class="md-tabs__link">
+        <a href="../../trackers/comparison/" class="md-tabs__link">
           
   
   
@@ -580,7 +511,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="api/trackers/" class="md-tabs__link">
+        <a href="../../api/trackers/" class="md-tabs__link">
           
   
   
@@ -614,9 +545,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Trackers" class="md-nav__button md-logo" aria-label="Trackers" data-md-component="logo">
+    <a href="../.." title="Trackers" class="md-nav__button md-logo" aria-label="Trackers" data-md-component="logo">
       
-  <img src="assets/logo-trackers-violet.svg" alt="logo">
+  <img src="../../assets/logo-trackers-violet.svg" alt="logo">
 
     </a>
     Trackers
@@ -635,6 +566,93 @@
     </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Home
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -659,239 +677,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Home
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Install
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#track-from-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Track from CLI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#track-from-python" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Track from Python
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Evaluate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#algorithms" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Algorithms
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#download-datasets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Download Datasets
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#try-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Try It
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tutorials" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tutorials
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#faq" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FAQ
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -909,7 +698,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -927,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         
   
   
@@ -955,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/track/" class="md-nav__link">
+      <a href="../track/" class="md-nav__link">
         
   
   
@@ -983,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/download/" class="md-nav__link">
+      <a href="../download/" class="md-nav__link">
         
   
   
@@ -1011,7 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/evaluate/" class="md-nav__link">
+      <a href="../evaluate/" class="md-nav__link">
         
   
   
@@ -1036,10 +825,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="learn/tune/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tune Trackers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1055,6 +871,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tune-a-sequence-subset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tune a Sequence Subset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-best-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Best Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1067,7 +969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/detection-quality/" class="md-nav__link">
+      <a href="../detection-quality/" class="md-nav__link">
         
   
   
@@ -1095,7 +997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/state-estimators/" class="md-nav__link">
+      <a href="../state-estimators/" class="md-nav__link">
         
   
   
@@ -1123,7 +1025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/iou/" class="md-nav__link">
+      <a href="../iou/" class="md-nav__link">
         
   
   
@@ -1151,7 +1053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/about/" class="md-nav__link">
+      <a href="../about/" class="md-nav__link">
         
   
   
@@ -1238,7 +1140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="trackers/comparison/" class="md-nav__link">
+      <a href="../../trackers/comparison/" class="md-nav__link">
         
   
   
@@ -1266,7 +1168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="trackers/sort/" class="md-nav__link">
+      <a href="../../trackers/sort/" class="md-nav__link">
         
   
   
@@ -1294,7 +1196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="trackers/bytetrack/" class="md-nav__link">
+      <a href="../../trackers/bytetrack/" class="md-nav__link">
         
   
   
@@ -1322,7 +1224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="trackers/ocsort/" class="md-nav__link">
+      <a href="../../trackers/ocsort/" class="md-nav__link">
         
   
   
@@ -1350,7 +1252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="trackers/botsort/" class="md-nav__link">
+      <a href="../../trackers/botsort/" class="md-nav__link">
         
   
   
@@ -1437,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/trackers/" class="md-nav__link">
+      <a href="../../api/trackers/" class="md-nav__link">
         
   
   
@@ -1465,7 +1367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/motion/" class="md-nav__link">
+      <a href="../../api/motion/" class="md-nav__link">
         
   
   
@@ -1493,7 +1395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/datasets/" class="md-nav__link">
+      <a href="../../api/datasets/" class="md-nav__link">
         
   
   
@@ -1521,7 +1423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/evals/" class="md-nav__link">
+      <a href="../../api/evals/" class="md-nav__link">
         
   
   
@@ -1549,7 +1451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/io/" class="md-nav__link">
+      <a href="../../api/io/" class="md-nav__link">
         
   
   
@@ -1594,6 +1496,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1613,10 +1517,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#track-from-cli" class="md-nav__link">
+  <a href="#prepare-data" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Track from CLI
+        Prepare Data
       
     </span>
   </a>
@@ -1624,10 +1528,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#track-from-python" class="md-nav__link">
+  <a href="#quickstart" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Track from Python
+        Quickstart
       
     </span>
   </a>
@@ -1635,10 +1539,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#evaluate" class="md-nav__link">
+  <a href="#tune-a-sequence-subset" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Evaluate
+        Tune a Sequence Subset
       
     </span>
   </a>
@@ -1646,10 +1550,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#algorithms" class="md-nav__link">
+  <a href="#use-best-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Algorithms
+        Use Best Parameters
       
     </span>
   </a>
@@ -1657,43 +1561,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#download-datasets" class="md-nav__link">
+  <a href="#cli-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Download Datasets
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#try-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Try It
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tutorials" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tutorials
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#faq" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FAQ
+        CLI Reference
       
     </span>
   </a>
@@ -1720,228 +1591,184 @@
   
 
 
-  <h1>Quickstart</h1>
-
-<div align="center">
-
-<img src="assets/logo-trackers-violet.svg" alt="Trackers Logo" width="200" height="200">
-
-</div>
-
-<p>Roboflow Trackers achieves 60.5 HOTA (ByteTrack) and 62.0 HOTA (OC-SORT) on MOT17, benchmarked across four standard datasets. Apache 2.0, Python 3.10+, 71K+ monthly PyPI installs.</p>
-<video width="100%" controls autoplay muted loop>
-  <source src="https://storage.googleapis.com/com-roboflow-marketing/trackers/docs/track-objects-page.mp4" type="video/mp4">
-</video>
-
+<h1 id="tune-trackers">Tune Trackers</h1>
+<p>Use Optuna to tune tracker hyperparameters automatically and maximize your target metric on MOT-format evaluation data.</p>
+<p><strong>What you'll learn:</strong></p>
+<ul>
+<li>Install tuning dependencies</li>
+<li>Prepare ground truth and detection files for tuning</li>
+<li>Run tuning from CLI and Python</li>
+<li>Save and apply the best parameter set</li>
+</ul>
 <hr />
 <h2 id="install">Install</h2>
-<p>Get started by installing the package.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install trackers
+<p>Install the tuning extra to enable Optuna-based hyperparameter search.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install &quot;trackers[tune]&quot;
 </span></code></pre></div>
-<p>For more options, see the <a href="learn/install/">install guide</a>.</p>
+<p>For more options, see the <a href="../install/">install guide</a>.</p>
 <hr />
-<p><a href="https://www.youtube.com/watch?v=u0k2dTZ0vfs"><img alt="Watch: Building Real-Time Multi-Object Tracking with RF-DETR and Trackers" src="https://storage.googleapis.com/com-roboflow-marketing/trackers/docs/roboflow-piotr-rf-detr-trackers-v1b-callout.png" /></a></p>
-<hr />
-<h2 id="track-from-cli">Track from CLI</h2>
-<p>Point at a video, webcam, RTSP stream, or image directory. Get tracked output.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>trackers<span class="w"> </span>track<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>--source<span class="w"> </span>video.mp4<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>--output<span class="w"> </span>output.mp4<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>--model<span class="w"> </span>rfdetr-medium<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>--tracker<span class="w"> </span>bytetrack<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span>--show-labels<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span>--show-trajectories
+<h2 id="prepare-data">Prepare Data</h2>
+<p>The tuner needs matching MOT files for ground truth and detections.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>data
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── gt
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>│   ├── MOT17-02-FRCNN.txt
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>│   ├── MOT17-04-FRCNN.txt
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>│   └── ...
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>└── detections
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    ├── MOT17-02-FRCNN.txt
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    ├── MOT17-04-FRCNN.txt
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    └── ...
 </span></code></pre></div>
-<p>For all CLI options, see the <a href="learn/track/">tracking guide</a>.</p>
-<hr />
-<h2 id="track-from-python">Track from Python</h2>
-<p>Plug trackers into your existing detection pipeline. Works with any detector.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">supervision</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sv</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_model</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ByteTrackTracker</span>
-</span></span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;rfdetr-medium&quot;</span><span class="p">)</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="hll"><span class="n">tracker</span> <span class="o">=</span> <span class="n">ByteTrackTracker</span><span class="p">()</span>
-</span></span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="s2">&quot;video.mp4&quot;</span><span class="p">)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">while</span> <span class="n">cap</span><span class="o">.</span><span class="n">isOpened</span><span class="p">():</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="k">break</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">frame</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">detections</span> <span class="o">=</span> <span class="n">sv</span><span class="o">.</span><span class="n">Detections</span><span class="o">.</span><span class="n">from_inference</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="hll">    <span class="n">tracked</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">detections</span><span class="p">)</span>
-</span></span></code></pre></div>
-<p>For more examples, see the <a href="learn/track/">tracking guide</a>.</p>
-<hr />
-<h2 id="evaluate">Evaluate</h2>
-<p>Benchmark your tracker against ground truth with standard MOT metrics.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>trackers eval \
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    --gt-dir ./data/mot17/val \
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    --tracker-dir results \
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    --metrics CLEAR HOTA Identity \
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    --columns MOTA HOTA IDF1
+<p>Each sequence must exist in both directories with the same filename (<code>{sequence}.txt</code>).</p>
+<p>Use MOT format lines:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&lt;frame&gt;,&lt;id&gt;,&lt;bb_left&gt;,&lt;bb_top&gt;,&lt;bb_width&gt;,&lt;bb_height&gt;,&lt;conf&gt;,&lt;x&gt;,&lt;y&gt;,&lt;z&gt;
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Sequence                        MOTA    HOTA    IDF1
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>----------------------------------------------------
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>MOT17-02-FRCNN                30.192  35.475  38.515
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>MOT17-04-FRCNN                48.912  55.096  61.854
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>MOT17-05-FRCNN                52.755  45.515  55.705
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>MOT17-09-FRCNN                51.441  50.108  57.038
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>MOT17-10-FRCNN                51.832  49.648  55.797
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>MOT17-11-FRCNN                55.501  49.401  55.061
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>MOT17-13-FRCNN                60.488  58.651  69.884
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>----------------------------------------------------
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>COMBINED                      47.406  50.355  56.600
+<p>For detections, use <code>id=-1</code>. For more details on the format and evaluation workflow, see the <a href="../evaluate/">evaluation guide</a>.</p>
+<hr />
+<h2 id="quickstart">Quickstart</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">CLI</label><label for="__tabbed_1_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Tune ByteTrack and optimize <code>HOTA</code>.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>trackers tune \
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    --tracker bytetrack \
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    --gt-dir ./data/gt \
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    --detections-dir ./data/detections \
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    --objective HOTA \
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    --metrics CLEAR HOTA Identity \
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    --n-trials 50 \
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    --output ./results/bytetrack-best.json
 </span></code></pre></div>
-<p>For the full evaluation workflow, see the <a href="learn/evaluate/">evaluation guide</a>.</p>
-<hr />
-<h2 id="algorithms">Algorithms</h2>
-<p>Clean, modular implementations of leading trackers. All HOTA scores use default parameters.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Algorithm</th>
-<th style="text-align: center;">Description</th>
-<th style="text-align: center;">MOT17 HOTA</th>
-<th style="text-align: center;">SportsMOT HOTA</th>
-<th style="text-align: center;">SoccerNet HOTA</th>
-<th style="text-align: center;">DanceTrack HOTA</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><a href="https://arxiv.org/abs/1602.00763">SORT</a></td>
-<td style="text-align: center;">Kalman filter + Hungarian matching baseline.</td>
-<td style="text-align: center;">58.4</td>
-<td style="text-align: center;">70.9</td>
-<td style="text-align: center;">81.6</td>
-<td style="text-align: center;">45.0</td>
-</tr>
-<tr>
-<td style="text-align: center;"><a href="https://arxiv.org/abs/2110.06864">ByteTrack</a></td>
-<td style="text-align: center;">Two-stage association using high and low confidence detections.</td>
-<td style="text-align: center;">59.4</td>
-<td style="text-align: center;">72.8</td>
-<td style="text-align: center;">83.9</td>
-<td style="text-align: center;">50.2</td>
-</tr>
-<tr>
-<td style="text-align: center;"><a href="https://arxiv.org/abs/2203.14360">OC-SORT</a></td>
-<td style="text-align: center;">Observation-centric recovery for lost tracks.</td>
-<td style="text-align: center;">61.9</td>
-<td style="text-align: center;">71.7</td>
-<td style="text-align: center;">78.4</td>
-<td style="text-align: center;"><strong>51.8</strong></td>
-</tr>
-<tr>
-<td style="text-align: center;"><a href="https://arxiv.org/abs/2206.14651">BoT-SORT</a></td>
-<td style="text-align: center;">Camera motion compensation</td>
-<td style="text-align: center;"><strong>63.7</strong></td>
-<td style="text-align: center;"><strong>73.8</strong></td>
-<td style="text-align: center;"><strong>84.5</strong></td>
-<td style="text-align: center;">50.5</td>
-</tr>
-</tbody>
-</table>
-<p>For detailed benchmarks and tuned configurations, see the <a href="trackers/comparison/">tracker comparison</a>.</p>
-<hr />
-<h2 id="download-datasets">Download Datasets</h2>
-<p>Pull benchmark datasets for evaluation with a single command.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>trackers<span class="w"> </span>download<span class="w"> </span>mot17<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--split<span class="w"> </span>val<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--asset<span class="w"> </span>annotations,detections
+</div>
+<div class="tabbed-block">
+<p>Run the same tuning flow with the <code>Tuner</code> class.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">trackers.tune</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuner</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">tuner</span> <span class="o">=</span> <span class="n">Tuner</span><span class="p">(</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">tracker_id</span><span class="o">=</span><span class="s2">&quot;bytetrack&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">gt_dir</span><span class="o">=</span><span class="s2">&quot;./data/gt&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">detections_dir</span><span class="o">=</span><span class="s2">&quot;./data/detections&quot;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">objective</span><span class="o">=</span><span class="s2">&quot;HOTA&quot;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CLEAR&quot;</span><span class="p">,</span> <span class="s2">&quot;HOTA&quot;</span><span class="p">,</span> <span class="s2">&quot;Identity&quot;</span><span class="p">],</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">n_trials</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">best_params</span> <span class="o">=</span> <span class="n">tuner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">best_params</span><span class="p">)</span>
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Dataset</th>
-<th style="text-align: center;">Description</th>
-<th style="text-align: center;">Splits</th>
-<th style="text-align: center;">Assets</th>
-<th style="text-align: center;">License</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><code>mot17</code></td>
-<td style="text-align: center;">Pedestrian tracking with crowded scenes and frequent occlusions.</td>
-<td style="text-align: center;"><code>train</code>, <code>val</code>, <code>test</code></td>
-<td style="text-align: center;"><code>frames</code>, <code>annotations</code>, <code>detections</code></td>
-<td style="text-align: center;">CC BY-NC-SA 3.0</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>sportsmot</code></td>
-<td style="text-align: center;">Sports broadcast tracking with fast motion and similar-looking targets.</td>
-<td style="text-align: center;"><code>train</code>, <code>val</code>, <code>test</code></td>
-<td style="text-align: center;"><code>frames</code>, <code>annotations</code></td>
-<td style="text-align: center;">CC BY 4.0</td>
-</tr>
-</tbody>
-</table>
-<p>For more download options, see the <a href="learn/download/">download guide</a>.</p>
-<hr />
-<h2 id="try-it">Try It</h2>
-<p>Try trackers in your browser with our <a href="https://huggingface.co/spaces/roboflow/trackers">Hugging Face Playground</a>.</p>
-<hr />
-<h2 id="tutorials">Tutorials</h2>
-<div class="grid cards">
-<ul>
-<li>
-<p><strong>How to Track Objects with SORT</strong></p>
-<hr />
-<p><a href="https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/how-to-track-objects-with-sort-tracker.ipynb"><img alt="" src="https://storage.googleapis.com/com-roboflow-marketing/trackers/assets/sort-sample.png" /></a></p>
-<p>End-to-end example showing how to run RF-DETR detection with the SORT tracker.</p>
-<p><a href="https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/how-to-track-objects-with-sort-tracker.ipynb"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.941 4.976a7.03 7.03 0 0 0-4.93 2.064 7.033 7.033 0 0 0-.124 9.807l2.395-2.395a3.646 3.646 0 0 1 5.15-5.148l2.397-2.399a7.03 7.03 0 0 0-4.888-1.93m-9.871.01a7.03 7.03 0 0 0-4.888 1.931l2.391 2.391a3.643 3.643 0 0 1 5.023.127l1.734-2.973-.1-.08a7.03 7.03 0 0 0-4.16-1.396m15.01 2.172-2.39 2.39a3.646 3.646 0 0 1-5.15 5.15l-2.406 2.407a7.036 7.036 0 0 0 9.945-9.947m-20.148.01a7.033 7.033 0 0 0-.002 9.681l2.397-2.397a3.643 3.643 0 0 1-.004-4.892zm7.664 7.423a3.635 3.635 0 0 1-5.017.113L2.182 17.1a7.03 7.03 0 0 0 9.007.546l.137-.112z"/></svg></span> Run Google Colab</a></p>
-</li>
-<li>
-<p><strong>How to Track Objects with ByteTrack</strong></p>
-<hr />
-<p><a href="https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/how-to-track-objects-with-bytetrack-tracker.ipynb"><img alt="" src="https://storage.googleapis.com/com-roboflow-marketing/trackers/assets/bytetrack-sample.png" /></a></p>
-<p>End-to-end example showing how to run RF-DETR detection with the ByteTrack tracker.</p>
-<p><a href="https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/how-to-track-objects-with-bytetrack-tracker.ipynb"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.941 4.976a7.03 7.03 0 0 0-4.93 2.064 7.033 7.033 0 0 0-.124 9.807l2.395-2.395a3.646 3.646 0 0 1 5.15-5.148l2.397-2.399a7.03 7.03 0 0 0-4.888-1.93m-9.871.01a7.03 7.03 0 0 0-4.888 1.931l2.391 2.391a3.643 3.643 0 0 1 5.023.127l1.734-2.973-.1-.08a7.03 7.03 0 0 0-4.16-1.396m15.01 2.172-2.39 2.39a3.646 3.646 0 0 1-5.15 5.15l-2.406 2.407a7.036 7.036 0 0 0 9.945-9.947m-20.148.01a7.033 7.033 0 0 0-.002 9.681l2.397-2.397a3.643 3.643 0 0 1-.004-4.892zm7.664 7.423a3.635 3.635 0 0 1-5.017.113L2.182 17.1a7.03 7.03 0 0 0 9.007.546l.137-.112z"/></svg></span> Run Google Colab</a></p>
-</li>
-<li>
-<p><strong>How to Track Objects with OC-SORT</strong></p>
-<hr />
-<p>End-to-end example showing how to run RF-DETR detection with the OC-SORT tracker.</p>
-<p><a href="https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/how-to-track-objects-with-ocsort-tracker.ipynb"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.941 4.976a7.03 7.03 0 0 0-4.93 2.064 7.033 7.033 0 0 0-.124 9.807l2.395-2.395a3.646 3.646 0 0 1 5.15-5.148l2.397-2.399a7.03 7.03 0 0 0-4.888-1.93m-9.871.01a7.03 7.03 0 0 0-4.888 1.931l2.391 2.391a3.643 3.643 0 0 1 5.023.127l1.734-2.973-.1-.08a7.03 7.03 0 0 0-4.16-1.396m15.01 2.172-2.39 2.39a3.646 3.646 0 0 1-5.15 5.15l-2.406 2.407a7.036 7.036 0 0 0 9.945-9.947m-20.148.01a7.033 7.033 0 0 0-.002 9.681l2.397-2.397a3.643 3.643 0 0 1-.004-4.892zm7.664 7.423a3.635 3.635 0 0 1-5.017.113L2.182 17.1a7.03 7.03 0 0 0 9.007.546l.137-.112z"/></svg></span> Run Google Colab</a></p>
-</li>
-<li>
-<p><strong>How to Tune Tracker Hyperparameters</strong></p>
-<hr />
-<p>Optimize tracker settings with Optuna to maximize HOTA, MOTA, or IDF1 on your dataset.</p>
-<p><a href="learn/tune/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 13c-1.86 0-3.41 1.28-3.86 3H2v2h2.14c.45 1.72 2 3 3.86 3s3.41-1.28 3.86-3H22v-2H11.86c-.45-1.72-2-3-3.86-3m0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2M19.86 6c-.45-1.72-2-3-3.86-3s-3.41 1.28-3.86 3H2v2h10.14c.45 1.72 2 3 3.86 3s3.41-1.28 3.86-3H22V6zM16 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2"/></svg></span> Read Tuning Guide</a></p>
-</li>
-</ul>
+</div>
+</div>
 </div>
 <hr />
-<h2 id="faq">FAQ</h2>
-<p><strong>What is multi-object tracking and how does it differ from object detection?</strong></p>
-<p>Object detection finds and classifies objects in a single image frame. Multi-object tracking
-assigns a persistent ID to each detected object across video frames, maintaining continuity
-through occlusions, re-entries, and camera motion. Trackers use a detect-then-track approach:
-a detector runs on each frame, and the tracker links detections across time using motion
-models and spatial matching.</p>
-<p><strong>Which tracker should I use?</strong></p>
-<p>Start with ByteTrack — out of the box, it performs best across two out of four benchmarks in our evaluation and
-handles variable-confidence detectors well, while providing real time latency. Use SORT if speed or device constraints require the lightest possible tracker. Use OC-SORT when camera motion is significant or objects follow
-non-linear paths. See the <a href="trackers/comparison/">tracker comparison</a> for benchmark scores.</p>
-<p><strong>Do I need a specific detector?</strong></p>
-<p>No. Roboflow Trackers works with any detector that outputs <code>supervision.Detections</code> objects.
-The library ships example pipelines using RF-DETR but is compatible with YOLO, Detectron2,
-and any custom model. The tracker never inspects the detection model directly.</p>
-<p><strong>What MOT datasets does the library support?</strong></p>
-<p>MOT17 and SportsMOT are supported for download and evaluation. Use
-<code>trackers download &lt;dataset&gt;</code> to pull frames, annotations, and pre-computed
-detections in one command. DanceTrack and SoccerNet-tracking support is coming soon.
-See the <a href="learn/download/">download guide</a> for asset options.</p>
-<p><strong>How do I evaluate my tracker?</strong></p>
-<p>Run <code>trackers eval</code> against a directory of ground-truth MOT-format text files. The evaluation
-pipeline computes HOTA, IDF1, and MOTA and prints a per-sequence and combined score table.
-See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p>
+<h2 id="tune-a-sequence-subset">Tune a Sequence Subset</h2>
+<p>Use a seqmap file when you want to tune on a specific subset of sequences.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a># seqmap.txt
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>MOT17-02-FRCNN
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>MOT17-04-FRCNN
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>MOT17-09-FRCNN
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">CLI</label><label for="__tabbed_2_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>trackers tune \
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    --tracker bytetrack \
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    --gt-dir ./data/gt \
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    --detections-dir ./data/detections \
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    --seqmap ./seqmap.txt
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">trackers.tune</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuner</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">tuner</span> <span class="o">=</span> <span class="n">Tuner</span><span class="p">(</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">tracker_id</span><span class="o">=</span><span class="s2">&quot;bytetrack&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">gt_dir</span><span class="o">=</span><span class="s2">&quot;./data/gt&quot;</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">detections_dir</span><span class="o">=</span><span class="s2">&quot;./data/detections&quot;</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">seqmap</span><span class="o">=</span><span class="s2">&quot;./seqmap.txt&quot;</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">n_trials</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">)</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">best_params</span> <span class="o">=</span> <span class="n">tuner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">best_params</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="use-best-parameters">Use Best Parameters</h2>
+<p>Apply tuned values by unpacking the saved JSON dictionary into your tracker constructor.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ByteTrackTracker</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./results/bytetrack-best.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">best_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">tracker</span> <span class="o">=</span> <span class="n">ByteTrackTracker</span><span class="p">(</span><span class="o">**</span><span class="n">best_params</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="cli-reference">CLI Reference</h2>
+<p>All arguments accepted by <code>trackers tune</code>.</p>
+<table>
+  <colgroup>
+    <col style="width: 40%">
+    <col style="width: 40%">
+    <col style="width: 20%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Argument</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>--tracker</code></td>
+      <td>Tracker name to tune. Common values: <code>bytetrack</code>, <code>sort</code>, <code>ocsort</code>.</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>--gt-dir</code></td>
+      <td>Directory with ground-truth MOT files (<code>{sequence}.txt</code>).</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>--detections-dir</code></td>
+      <td>Directory with detection MOT files (<code>{sequence}.txt</code>), one file per sequence.</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>--objective</code></td>
+      <td>Metric to maximize: <code>MOTA</code>, <code>HOTA</code>, or <code>IDF1</code>.</td>
+      <td><code>HOTA</code></td>
+    </tr>
+    <tr>
+      <td><code>--n-trials</code></td>
+      <td>Number of Optuna trials to run.</td>
+      <td><code>100</code></td>
+    </tr>
+    <tr>
+      <td><code>--metrics</code></td>
+      <td>Metric families to compute: <code>CLEAR</code>, <code>HOTA</code>, <code>Identity</code>. The family required by <code>--objective</code> is added automatically.</td>
+      <td><code>CLEAR</code></td>
+    </tr>
+    <tr>
+      <td><code>--threshold</code></td>
+      <td>IoU threshold used during evaluation matching for <code>CLEAR</code> and <code>Identity</code>. Higher values make scoring stricter, lower values make it more permissive.</td>
+      <td><code>0.5</code></td>
+    </tr>
+    <tr>
+      <td><code>--seqmap</code></td>
+      <td>Optional path to a sequence map file. When set, only listed sequences are tuned.</td>
+      <td>all files in <code>--detections-dir</code></td>
+    </tr>
+    <tr>
+      <td><code>--output</code>, <code>-o</code></td>
+      <td>Path to save best parameters as JSON.</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1964,7 +1791,7 @@ See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 17, 2026 20:01:36 UTC">2026-05-17</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 7, 2026 03:04:54 UTC">2026-05-07</span>
   </span>
 
     
@@ -1974,7 +1801,7 @@ See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 14, 2025 17:18:59 UTC">2025-04-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 7, 2026 03:04:54 UTC">2026-05-07</span>
   </span>
 
     
@@ -1985,55 +1812,6 @@ See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p
 
 
 
-
-<h2 id="__comments">Comments</h2>
-
-<script src="https://giscus.app/client.js"
-        data-repo="roboflow/trackers"
-        data-repo-id="R_kgDOOZe2kQ"
-        data-category="Docs"
-        data-category-id="DIC_kwDOOZe2kc4CpZFf"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
-
-<!-- Synchronize Giscus theme with palette -->
-<script>
-    var giscus = document.querySelector("script[src*=giscus]")
-
-    /* Set palette on initial load */
-    var palette = __md_get("__palette")
-    if (palette && typeof palette.color === "object") {
-      var theme = palette.color.scheme === "slate" ? "dark" : "light"
-      giscus.setAttribute("data-theme", theme)
-    }
-
-    /* Register event handlers after documented loaded */
-    document.addEventListener("DOMContentLoaded", function() {
-      var ref = document.querySelector("[data-md-component=palette]")
-      ref.addEventListener("change", function() {
-        var palette = __md_get("__palette")
-        if (palette && typeof palette.color === "object") {
-          var theme = palette.color.scheme === "slate" ? "dark" : "light"
-
-          /* Instruct Giscus to change theme */
-          var frame = document.querySelector(".giscus-frame")
-          frame.contentWindow.postMessage(
-            { giscus: { setConfig: { theme } } },
-            "https://giscus.app"
-          )
-        }
-      })
-    })
-</script>
 
                 
               </article>
@@ -2053,15 +1831,31 @@ See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p
       
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
+          
+          <a href="../evaluate/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Evaluate Trackers">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Evaluate Trackers
+              </div>
+            </div>
+          </a>
+        
         
           
-          <a href="learn/install/" class="md-footer__link md-footer__link--next" aria-label="Next: Install Trackers">
+          <a href="../detection-quality/" class="md-footer__link md-footer__link--next" aria-label="Next: Detection Quality Matters">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Install Trackers
+                Detection Quality Matters
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2185,20 +1979,20 @@ See the <a href="learn/evaluate/">evaluation guide</a> for the full workflow.</p
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.tracking", "navigation.expand", "navigation.tabs"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.tracking", "navigation.expand", "navigation.tabs"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="javascripts/pycon_copy.js"></script>
+        <script src="../../javascripts/pycon_copy.js"></script>
       
-        <script src="javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
       
-        <script src="javascripts/cli_builder_framework.js"></script>
+        <script src="../../javascripts/cli_builder_framework.js"></script>
       
-        <script src="javascripts/command_builder.js"></script>
+        <script src="../../javascripts/command_builder.js"></script>
       
     
   </body>
