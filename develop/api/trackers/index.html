@@ -3196,6 +3196,31 @@ for fixed-rate mode (<code>frame_step = 1.0</code> per call).</p>
     </table>
 
 
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
 <p><span class="doc-section-title">Warns:</span></p>
     <table>
       <thead>
@@ -3607,6 +3632,31 @@ for fixed-rate mode (<code>frame_step = 1.0</code> per call).</p>
     </table>
 
 
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
 <p><span class="doc-section-title">Warns:</span></p>
     <table>
       <thead>
@@ -3845,7 +3895,11 @@ during occlusion.</p>
               <div class="doc-md-description">
                 <p>State estimator class to use for Kalman filter.
 Defaults to <code>XCYCSRStateEstimator</code>. Can also use
-<code>XYXYStateEstimator</code> for corner-based representation.</p>
+<code>XYXYStateEstimator</code> for corner-based representation or
+<code>XCYCWHStateEstimator</code> for center-width-height representation.
+The OC-SORT noise tuning is specific to <code>XCYCSRStateEstimator</code>;
+the other two only get its state-covariance and velocity
+process-noise scaling.</p>
               </div>
             </td>
             <td>
@@ -4041,6 +4095,31 @@ for fixed-rate mode (<code>frame_step = 1.0</code> per call).</p>
             <td>
               <div class="doc-md-description">
                 <p>from input.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
               </div>
             </td>
           </tr>
@@ -4554,6 +4633,31 @@ for fixed-rate mode (<code>frame_step = 1.0</code> per call).</p>
             <td>
               <div class="doc-md-description">
                 <p>tracker_id of -1.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
               </div>
             </td>
           </tr>
@@ -5139,6 +5243,31 @@ for fixed-rate mode (<code>frame_step = 1.0</code> per call).</p>
             <td>
               <div class="doc-md-description">
                 <p>callers filtering by <code>tracker_id &gt;= 0</code> will silently drop these rows.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
               </div>
             </td>
           </tr>
@@ -5811,6 +5940,31 @@ lost-track pruning.</p>
             <td>
               <div class="doc-md-description">
                 <p>timestamp), all <code>tracker_id</code> values are <code>-1</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>detections.xyxy</code> contains NaN or inf. The check runs
+before any tracker state is advanced, so a failed call leaves the
+tracker unchanged.</p>
               </div>
             </td>
           </tr>
